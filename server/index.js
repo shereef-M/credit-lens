@@ -6,6 +6,7 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/api/applications", require("./routes/applications"));
 
 app.get("/", (req, res) => {
   res.json({ status: "CrediLens server is running" });
