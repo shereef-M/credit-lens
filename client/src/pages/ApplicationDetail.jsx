@@ -35,6 +35,19 @@ export default function ApplicationDetail() {
       >
         <strong>Prediction: {application.prediction}</strong>
         <p>Risk score: {application.risk_score}</p>
+
+        {application.top_factors && (
+          <div style={{ marginTop: 10 }}>
+            <strong>Key factors:</strong>
+            <ul>
+              {application.top_factors.map((factor, i) => (
+                <li key={i}>
+                  {factor.feature.replace(/_/g, " ")} ({factor.effect} risk)
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <h4>Loan Details</h4>

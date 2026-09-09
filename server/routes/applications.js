@@ -11,6 +11,7 @@ router.post("/", async (req, res) => {
       applicantName,
       loanamount,
       totaldue,
+      loannumber,
       termdays,
       prev_loan_count,
       avg_days_early_late,
@@ -29,6 +30,7 @@ router.post("/", async (req, res) => {
       loanamount,
       totaldue,
       termdays,
+      loannumber,
       prev_loan_count,
       avg_days_early_late,
       max_days_late,
@@ -45,6 +47,7 @@ router.post("/", async (req, res) => {
     const application = new Application({
       applicantName,
       loanamount,
+      loannumber,
       totaldue,
       termdays,
       prev_loan_count,
@@ -60,6 +63,7 @@ router.post("/", async (req, res) => {
       employment_status_clients,
       prediction: mlResponse.data.prediction,
       risk_score: mlResponse.data.risk_score,
+      top_factors: mlResponse.data.top_factors,
     });
 
     await application.save();
@@ -77,6 +81,18 @@ router.get("/", async (req, res) => {
     res.json(applications);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch applications" });
+  }
+});
+// Get a single application by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const application = await Application.findById(req.params.id);
+    if (!application) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+    res.json(application);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch application" });
   }
 });
 

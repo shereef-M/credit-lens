@@ -19,6 +19,8 @@ const applicationSchema = new mongoose.Schema(
     employment_status_clients: { type: String, required: true },
     prediction: { type: String },
     risk_score: { type: Number },
+    loannumber: { type: Number, required: true },
+    top_factors: [{ feature: String, effect: String }],
   },
   { timestamps: true },
 );

@@ -5,6 +5,7 @@ import { createApplication } from "../api/client";
 const initialState = {
   applicantName: "",
   loanamount: "",
+  loannumber: "",
   totaldue: "",
   termdays: "",
   prev_loan_count: "",
@@ -39,6 +40,7 @@ export default function NewApplication() {
         ...form,
         loanamount: Number(form.loanamount),
         totaldue: Number(form.totaldue),
+        loannumber: Number(form.loannumber),
         termdays: Number(form.termdays),
         prev_loan_count: Number(form.prev_loan_count) || 0,
         avg_days_early_late: Number(form.avg_days_early_late) || 0,
@@ -75,6 +77,14 @@ export default function NewApplication() {
           type="number"
           placeholder="Loan Amount"
           value={form.loanamount}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="loannumber"
+          type="number"
+          placeholder="Loan Number"
+          value={form.loannumber}
           onChange={handleChange}
           required
         />
