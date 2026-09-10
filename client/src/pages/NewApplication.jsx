@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { createApplication } from "../api/client";
 
 const initialState = {
   applicantName: "",
   loanamount: "",
-  loannumber: "",
   totaldue: "",
   termdays: "",
+  loannumber: "",
   prev_loan_count: "",
   avg_days_early_late: "",
   max_days_late: "",
@@ -20,6 +20,63 @@ const initialState = {
   bank_name_clients: "",
   employment_status_clients: "Permanent",
 };
+
+const fields = [
+  { name: "applicantName", label: "Applicant Name", type: "text" },
+  {
+    name: "loanamount",
+    label: "Loan Amount (₦)",
+    type: "number",
+    helper: "The principal amount requested.",
+  },
+  {
+    name: "totaldue",
+    label: "Total Due (₦)",
+    type: "number",
+    helper: "Total repayable amount, including interest.",
+  },
+  {
+    name: "termdays",
+    label: "Loan Term (days)",
+    type: "number",
+    helper: "Typical short-term digital loans run 15–90 days.",
+  },
+  {
+    name: "loannumber",
+    label: "Loan Number",
+    type: "number",
+    helper:
+      "This applicant's Nth loan overall (e.g. 1 for a first-time borrower).",
+  },
+  {
+    name: "prev_loan_count",
+    label: "Previous Loan Count",
+    type: "number",
+    helper: "How many loans this applicant has completed before this one.",
+  },
+  {
+    name: "avg_days_early_late",
+    label: "Avg. Days Early/Late",
+    type: "number",
+    helper:
+      "Average repayment timing on past loans. Negative = paid early, positive = paid late.",
+  },
+  {
+    name: "max_days_late",
+    label: "Worst Days Late",
+    type: "number",
+    helper: "The latest a repayment has ever been, in days.",
+  },
+  {
+    name: "avg_loanamount",
+    label: "Avg. Previous Loan Amount (₦)",
+    type: "number",
+    helper: "Average size of this applicant's past loans.",
+  },
+  { name: "longitude_gps", label: "Longitude", type: "number" },
+  { name: "latitude_gps", label: "Latitude", type: "number" },
+  { name: "bank_name_clients", label: "Bank Name", type: "text" },
+];
 
 export default function NewApplication() {
   const [form, setForm] = useState(initialState);
@@ -40,8 +97,8 @@ export default function NewApplication() {
         ...form,
         loanamount: Number(form.loanamount),
         totaldue: Number(form.totaldue),
-        loannumber: Number(form.loannumber),
         termdays: Number(form.termdays),
+        loannumber: Number(form.loannumber),
         prev_loan_count: Number(form.prev_loan_count) || 0,
         avg_days_early_late: Number(form.avg_days_early_late) || 0,
         max_days_late: Number(form.max_days_late) || 0,
@@ -62,135 +119,79 @@ export default function NewApplication() {
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: "40px auto" }}>
+    <div className="page">
+      <p>
+        <Link to="/">&larr; Back to Dashboard</Link>
+      </p>
       <h2>New Loan Application</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="applicantName"
-          placeholder="Applicant Name"
-          value={form.applicantName}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="loanamount"
-          type="number"
-          placeholder="Loan Amount"
-          value={form.loanamount}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="loannumber"
-          type="number"
-          placeholder="Loan Number"
-          value={form.loannumber}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="totaldue"
-          type="number"
-          placeholder="Total Due"
-          value={form.totaldue}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="termdays"
-          type="number"
-          placeholder="Term (days)"
-          value={form.termdays}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="prev_loan_count"
-          type="number"
-          placeholder="Previous Loan Count"
-          value={form.prev_loan_count}
-          onChange={handleChange}
-        />
-        <input
-          name="avg_days_early_late"
-          type="number"
-          placeholder="Avg Days Early/Late"
-          value={form.avg_days_early_late}
-          onChange={handleChange}
-        />
-        <input
-          name="max_days_late"
-          type="number"
-          placeholder="Max Days Late"
-          value={form.max_days_late}
-          onChange={handleChange}
-        />
-        <input
-          name="avg_loanamount"
-          type="number"
-          placeholder="Avg Previous Loan Amount"
-          value={form.avg_loanamount}
-          onChange={handleChange}
-        />
-        <input
-          name="longitude_gps"
-          type="number"
-          placeholder="Longitude"
-          value={form.longitude_gps}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="latitude_gps"
-          type="number"
-          placeholder="Latitude"
-          value={form.latitude_gps}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="bank_name_clients"
-          placeholder="Bank Name"
-          value={form.bank_name_clients}
-          onChange={handleChange}
-          required
-        />
+      <div className="card">
+        <form onSubmit={handleSubmit}>
+          {fields.map((f) => (
+            <div className="form-group" key={f.name}>
+              <label htmlFor={f.name}>{f.label}</label>
+              {f.helper && <span className="helper-text">{f.helper}</span>}
+              <input
+                id={f.name}
+                name={f.name}
+                type={f.type}
+                value={form[f.name]}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          ))}
 
-        <select
-          name="bank_account_type"
-          value={form.bank_account_type}
-          onChange={handleChange}
-        >
-          <option value="Savings">Savings</option>
-          <option value="Current">Current</option>
-          <option value="Other">Other</option>
-        </select>
+          <div className="form-group">
+            <label htmlFor="bank_account_type">Bank Account Type</label>
+            <select
+              id="bank_account_type"
+              name="bank_account_type"
+              value={form.bank_account_type}
+              onChange={handleChange}
+            >
+              <option value="Savings">Savings</option>
+              <option value="Current">Current</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
-        <select
-          name="employment_status_clients"
-          value={form.employment_status_clients}
-          onChange={handleChange}
-        >
-          <option value="Permanent">Permanent</option>
-          <option value="Self-Employed">Self-Employed</option>
-          <option value="Unemployed">Unemployed</option>
-          <option value="Unknown">Unknown</option>
-        </select>
+          <div className="form-group">
+            <label htmlFor="employment_status_clients">Employment Status</label>
+            <select
+              id="employment_status_clients"
+              name="employment_status_clients"
+              value={form.employment_status_clients}
+              onChange={handleChange}
+            >
+              <option value="Permanent">Permanent</option>
+              <option value="Self-Employed">Self-Employed</option>
+              <option value="Unemployed">Unemployed</option>
+              <option value="Unknown">Unknown</option>
+            </select>
+          </div>
 
-        <select
-          name="was_referred"
-          value={form.was_referred}
-          onChange={handleChange}
-        >
-          <option value="0">Not Referred</option>
-          <option value="1">Referred</option>
-        </select>
+          <div className="form-group">
+            <label htmlFor="was_referred">Referral Status</label>
+            <span className="helper-text">
+              Was this applicant referred by an existing customer?
+            </span>
+            <select
+              id="was_referred"
+              name="was_referred"
+              value={form.was_referred}
+              onChange={handleChange}
+            >
+              <option value="0">Not Referred</option>
+              <option value="1">Referred</option>
+            </select>
+          </div>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? "Submitting..." : "Submit Application"}
-        </button>
-      </form>
+          {error && <p style={{ color: "var(--color-bad)" }}>{error}</p>}
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? "Submitting..." : "Submit Application"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
