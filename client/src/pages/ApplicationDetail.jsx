@@ -17,31 +17,107 @@ export default function ApplicationDetail() {
       });
   }, [id]);
 
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!application) return <p>Loading...</p>;
+  if (error)
+    return (
+      <div className="page">
+        <p style={{ color: "var(--color-bad)" }}>{error}</p>
+      </div>
+    );
+  if (!application)
+    return (
+      <div className="page">
+        <p>Loading...</p>
+      </div>
+    );
+
+  const isBad = application.prediction === "Bad";
+
+  const details = [
+    ["Loan Amount", `₦${application.loanamount?.toLocaleString()}`],
+    ["Total Due", `₦${application.totaldue?.toLocaleString()}`],
+    ["Term", `${application.termdays} days`],
+    ["Loan Number", application.loannumber],
+    ["Previous Loan Count", application.prev_loan_count],
+    ["Avg. Days Early/Late", application.avg_days_early_late],
+    [
+      "Bank",
+      `${application.bank_name_clients} (${application.bank_account_type})`,
+    ],
+    ["Employment", application.employment_status_clients],
+  ];
 
   return (
-    <div style={{ maxWidth: 500, margin: "40px auto" }}>
-      <Link to="/">&larr; Back to Dashboard</Link>
-      <h2>{application.applicantName}</h2>
+    <div className="page">
+      <p>
+        <Link to="/">&larr; Back to Dashboard</Link>
+      </p>
+      <h2 style={{ marginBottom: 20 }}>{application.applicantName}</h2>
 
       <div
+        className="card"
         style={{
-          padding: 16,
-          borderRadius: 8,
-          background: application.prediction === "Bad" ? "#fdecea" : "#eafaf1",
+          background: isBad ? "var(--color-bad-bg)" : "var(--color-good-bg)",
+          borderColor: isBad ? "#fecaca" : "#bbf7d0",
           marginBottom: 20,
         }}
       >
-        <strong>Prediction: {application.prediction}</strong>
-        <p>Risk score: {application.risk_score}</p>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: application.top_factors ? 16 : 0,
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontSize: 13,
+                color: "var(--color-text-muted)",
+                marginBottom: 2,
+              }}
+            >
+              Prediction
+            </div>
+            <div
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                color: isBad ? "var(--color-bad)" : "var(--color-good)",
+              }}
+            >
+              {application.prediction}
+            </div>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div
+              style={{
+                fontSize: 13,
+                color: "var(--color-text-muted)",
+                marginBottom: 2,
+              }}
+            >
+              Risk Score
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>
+              {application.risk_score}
+            </div>
+          </div>
+        </div>
 
-        {application.top_factors && (
-          <div style={{ marginTop: 10 }}>
-            <strong>Key factors:</strong>
-            <ul>
+        {application.top_factors && application.top_factors.length > 0 && (
+          <div
+            style={{
+              borderTop: `1px solid ${isBad ? "#fecaca" : "#bbf7d0"}`,
+              paddingTop: 12,
+            }}
+          >
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
+              Key Factors
+            </div>
+            <ul style={{ margin: 0, paddingLeft: 18 }}>
               {application.top_factors.map((factor, i) => (
-                <li key={i}>
+                <li key={i} style={{ fontSize: 14, marginBottom: 4 }}>
                   {factor.feature.replace(/_/g, " ")} ({factor.effect} risk)
                 </li>
               ))}
@@ -50,19 +126,32 @@ export default function ApplicationDetail() {
         )}
       </div>
 
-      <h4>Loan Details</h4>
-      <ul>
-        <li>Loan Amount: {application.loanamount}</li>
-        <li>Total Due: {application.totaldue}</li>
-        <li>Term: {application.termdays} days</li>
-        <li>Previous Loan Count: {application.prev_loan_count}</li>
-        <li>Avg Days Early/Late: {application.avg_days_early_late}</li>
-        <li>
-          Bank: {application.bank_name_clients} ({application.bank_account_type}
-          )
-        </li>
-        <li>Employment: {application.employment_status_clients}</li>
-      </ul>
+      <div className="card">
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            marginBottom: 12,
+            color: "var(--color-text-muted)",
+          }}
+        >
+          LOAN DETAILS
+        </div>
+        {details.map(([label, value]) => (
+          <div
+            key={label}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "10px 0",
+              borderBottom: "1px solid var(--color-border)",
+            }}
+          >
+            <span style={{ color: "var(--color-text-muted)" }}>{label}</span>
+            <span style={{ fontWeight: 500 }}>{value}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
